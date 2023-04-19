@@ -18,7 +18,10 @@ class UninAdmin(admin.ModelAdmin):
     list_filter  = ('unit_name',)
 
 class RecipesAdmin(admin.ModelAdmin):
-    list_filter = ('recipe_name',)
+    list_filter = (
+        'recipe_name',
+        ('user_id', admin.RelatedOnlyFieldListFilter),
+    )
     list_display = (
         'pk',
         'recipe_name',
@@ -50,11 +53,19 @@ class RecipesAdmin(admin.ModelAdmin):
     def get_count_favorite(self, object):
         from django.db.models import Count
         count = Favorite_recipes.objects.filter(recipes_id=object).count()
-        return f'{count} Раз'
+        if count > 0:
+            return f'{count} Пользователь'
+        else:
+            return '-'
     get_count_favorite.short_description = 'Добавили в избранное'
+
 
 class FavoriteRecipesAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user_id', 'recipes_id')
+
+class IngredientsAdmin(admin.ModelAdmin):
+    list_filter = ('ingr_name',)
+    list_display = ('pk', 'ingr_name',)
 
 admin.site.site_header = 'Админ-панель сайта рецетов'
 admin.site.site_title = 'Админ-панель сайта рецетов'
@@ -63,7 +74,7 @@ admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Tags)
 admin.site.register(Tags_list)
 admin.site.register(Unit_of_measure, UninAdmin)
-admin.site.register(Ingredients)
+admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Ingredients_list)
 admin.site.register(Shoping_list)
 admin.site.register(Favorite_recipes, FavoriteRecipesAdmin)
