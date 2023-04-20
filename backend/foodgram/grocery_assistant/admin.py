@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from .models import *
 
@@ -12,16 +13,32 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('username', 'email', )
     search_fields = ('username', 'email', )
 
+class RecipesTagListFilter(admin.SimpleListFilter):
+    title = ('Поиск по тегам')
+    parameter_name = "pk"
+
+    def lookups(self, request, model_admin):
+        if Tags.objects.exists:
+            lst = []
+            qwery = Tags.objects.all()
+            for i in Tags.objects.all():
+                lst = lst + [((i.pk), _(i.tag_name),)]
+            return lst
+        else:
+            pass
+    def queryset(self, request, queryset):
+        if self.value():
+            # qwery = Tags_list.objects.filter(tag_id=request)
+            queryset.filter()
+        return queryset
+
 class UninAdmin(admin.ModelAdmin):
     list_display = ('pk', 'unit_name',)
     search_fields = ('unit_name',)
-    list_filter  = ('unit_name',)
+    list_filter  = ['unit_name', RecipesTagListFilter]
 
 class RecipesAdmin(admin.ModelAdmin):
-    list_filter = (
-        'recipe_name',
-        ('user_id', admin.RelatedOnlyFieldListFilter),
-    )
+    list_filter = ['recipe_name','user_id__username',RecipesTagListFilter]
     list_display = (
         'pk',
         'recipe_name',
@@ -44,6 +61,7 @@ class RecipesAdmin(admin.ModelAdmin):
     readonly_fields = ('public_date', 'get_photo')
     save_on_top = True
     empty_value_display = '-пусто-'
+    ordering = ['pk', 'recipe_name']
 
     def get_photo(self, object):
         if object.image:
@@ -59,7 +77,6 @@ class RecipesAdmin(admin.ModelAdmin):
             return '-'
     get_count_favorite.short_description = 'Добавили в избранное'
 
-
 class FavoriteRecipesAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user_id', 'recipes_id')
 
@@ -67,12 +84,18 @@ class IngredientsAdmin(admin.ModelAdmin):
     list_filter = ('ingr_name',)
     list_display = ('pk', 'ingr_name',)
 
+class TagsAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'tag_name', 'color', 'slug']
+
+class TagsListAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'tag_id', 'recipes_id']
+
 admin.site.site_header = 'Админ-панель сайта рецетов'
 admin.site.site_title = 'Админ-панель сайта рецетов'
 
 admin.site.register(Recipes, RecipesAdmin)
-admin.site.register(Tags)
-admin.site.register(Tags_list)
+admin.site.register(Tags, TagsAdmin)
+admin.site.register(Tags_list, TagsListAdmin)
 admin.site.register(Unit_of_measure, UninAdmin)
 admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Ingredients_list)

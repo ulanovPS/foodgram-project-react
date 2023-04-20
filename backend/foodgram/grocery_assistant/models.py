@@ -54,15 +54,21 @@ class Tags(models.Model):
         verbose_name = 'Slag тег'
     ) # Slag тег
 
+    def __str__(self):
+        return f'{self.tag_name}'
+
+
 """ Список тегов на рецепт, сводная таблица """
 class Tags_list(models.Model):
     recipes_id = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name = 'Рецепт'
     ) # Номер рецепта
     tag_id = models.ForeignKey(
         Tags,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name = 'Тег'
     ) # Номер тега
 
 """ Единицы измерения ингридиентов """
