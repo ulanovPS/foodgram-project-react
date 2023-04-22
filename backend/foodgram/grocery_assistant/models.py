@@ -97,15 +97,18 @@ class Ingredients(models.Model):
 class Ingredients_list(models.Model):
     recipes_id = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name = 'Рецепт'
     ) # Номер рецепта
     ingr_id = models.ForeignKey(
         Ingredients,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name = 'Ингридиент'
     ) # Номер ингридиента
     unit_id = models.ForeignKey(
         Unit_of_measure,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name = 'Единицы измерения'
     ) # Единица измерения
 
 """ Список рецептов для которых надо составить список покупок """

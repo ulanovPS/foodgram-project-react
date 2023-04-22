@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import get_object_or_404
 
 from .models import *
 
@@ -27,9 +28,9 @@ class RecipesTagListFilter(admin.SimpleListFilter):
         else:
             pass
     def queryset(self, request, queryset):
-        if self.value():
-            # qwery = Tags_list.objects.filter(tag_id=request)
-            queryset.filter()
+        tag_id = self.value()
+        if tag_id:
+            return queryset.filter(tags_list__tag_id=tag_id)
         return queryset
 
 class UninAdmin(admin.ModelAdmin):
@@ -82,13 +83,31 @@ class FavoriteRecipesAdmin(admin.ModelAdmin):
 
 class IngredientsAdmin(admin.ModelAdmin):
     list_filter = ('ingr_name',)
-    list_display = ('pk', 'ingr_name',)
+    list_display = ('pk', 'ingr_name','get_unit_of_measure',)
+    readonly_fields = ('get_unit_of_measure',)
+
+    def get_unit_of_measure(self, object):
+        
+        try:
+            ing_lst = get_object_or_404(Ingredients_list, ingr_id=object)
+            unit = Ingredients_list.objects.filter(ingr_id=object).select_related('unit_id')
+            f = ''
+            for i in unit:
+                f = f + i.unit_id.unit_name
+            return f
+        except:
+            return f'-'
+        
+    get_unit_of_measure.short_description = 'Единицы измерения'
 
 class TagsAdmin(admin.ModelAdmin):
     list_display = ['pk', 'tag_name', 'color', 'slug']
 
 class TagsListAdmin(admin.ModelAdmin):
     list_display = ['pk', 'tag_id', 'recipes_id']
+
+class Ingredients_listAdmin(admin.ModelAdmin):
+    list_display = ['recipes_id', 'ingr_id', 'unit_id']
 
 admin.site.site_header = 'Админ-панель сайта рецетов'
 admin.site.site_title = 'Админ-панель сайта рецетов'
@@ -98,7 +117,7 @@ admin.site.register(Tags, TagsAdmin)
 admin.site.register(Tags_list, TagsListAdmin)
 admin.site.register(Unit_of_measure, UninAdmin)
 admin.site.register(Ingredients, IngredientsAdmin)
-admin.site.register(Ingredients_list)
+admin.site.register(Ingredients_list, Ingredients_listAdmin)
 admin.site.register(Shoping_list)
 admin.site.register(Favorite_recipes, FavoriteRecipesAdmin)
 admin.site.register(Follow)
