@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,9 +20,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'grocery_assistant.apps.GroceryAssistantConfig', # WEB Приложение Продуктовый помощник
+    'grocery_assistant.apps.GroceryAssistantConfig',  # WEB Приложение Продуктовый помощник
     'django.contrib.admin',
-    'django.contrib.auth', # Приложение для регистрации и авторизации пользователей
+    'django.contrib.auth',  # Приложение для регистрации и авторизации пользователей
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -117,7 +115,7 @@ STATIC_DIRS = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATICFILES_DIRS = [(os.path.join(BASE_DIR,'static'))]
+STATICFILES_DIRS = [(os.path.join(BASE_DIR, 'static'))]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

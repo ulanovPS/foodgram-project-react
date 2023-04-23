@@ -1,7 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+
+# from django.shortcuts import render
 
 
 # Главная страница
-def index(request):    
+def index(request):
     return HttpResponse('Главная страница')
