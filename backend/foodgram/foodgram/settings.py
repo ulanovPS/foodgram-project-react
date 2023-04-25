@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'users.apps.UsersConfig',  # Приложение пользователей разширенное
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
