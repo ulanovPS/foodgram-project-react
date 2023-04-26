@@ -12,68 +12,42 @@ def read_f(filename):
 """ Удаление поторов в кортеже """
 
 
-def delete_repeat(n_data, type_data):
-    # type_data: 1 или 2
-    # 1 - выбираем единицы измерения
-    # 2 - выбираем ингридиенты
-    lst = []
-    if type_data == 1:
-        for i in n_data:
-            lst.append(i['measurement_unit'])
-    elif type_data == 2:
-        for i in n_data:
-            lst.append(i['name'])
-    lst[:] = list(set(lst))
+def get_dictionary(n_data):
+    lst = {}
+    for i in n_data:
+        lst.update({i['name']: i['measurement_unit']})
     return lst
 
 
 """  Добавляем записи в таблицу единицы измерения """
 
 
-def insert_data(lst, mode_insrt):
+def insert_data(lst):
     try:
         conneciont = sqlite3.connect(
             "C:/Dev/foodgram-project-react/backend/foodgram/db.sqlite3"
         )
         cursor = conneciont.cursor()
         cursor_insert = conneciont.cursor()
-        for i in range(len(lst)):
-            # Добавляем записи в таблицу Единиц измерения
-            if mode_insrt == 1:
-                cursor.execute(
-                    """SELECT id
-                    FROM grocery_assistant_unit_of_measure
-                    WHERE unit_name = ?""", (lst[i], ))
-                row = cursor.fetchone()
-                if row:
-                    print(
-                        f'({row[0]},{lst[i]}) - такая запись уже существует!'
-                    )
-                else:
-                    cursor_insert.execute(
-                        """INSERT INTO grocery_assistant_unit_of_measure
-                        (unit_name)
-                        VALUES (?)""", (lst[i], ))
-                    print(f'{lst[i]} - добавлена новая запись')
-            # Добавляем записи в таблицу Единиц измерения
-            elif mode_insrt == 2:
-                cursor.execute("""
-                    SELECT id
-                    FROM grocery_assistant_ingredients
-                    WHERE ingr_name = ?""", (lst[i], ))
-                row = cursor.fetchone()
-                if row:
-                    print(
-                        f'({row[0]},{lst[i]}) - такая запись уже существует!'
-                    )
-                else:
-                    cursor_insert.execute(
-                        """INSERT INTO grocery_assistant_ingredients
-                        (ingr_name)
-                        VALUES (?)""",
-                        (lst[i], )
-                    )
-                    print(f'{lst[i]} - добавлена новая запись')
+        for i in lst:
+            # Добавляем записи в таблицу ингридиентов
+            cursor.execute("""
+                SELECT id
+                FROM grocery_assistant_ingredients
+                WHERE ingr_name = ?""", (lst[i], ))
+            row = cursor.fetchone()
+            if row:
+                print(
+                    f'({row[0]},{lst[i]}) - такая запись уже существует!'
+                )
+            else:
+                cursor_insert.execute(
+                    """INSERT INTO grocery_assistant_ingredients
+                    (ingr_name, measurement_unit)
+                    VALUES (?, ?)""",
+                    (i, lst[i], )
+                )
+                print(f'{i}:{lst[i]} - добавлена новая запись')
         conneciont.commit()
         cursor.close()
     except sqlite3.Error as error:
@@ -86,10 +60,7 @@ def insert_data(lst, mode_insrt):
 
 # Вызываем read_f
 n_data = read_f("C:/Dev/foodgram-project-react/data/ingredients.json")
-lst = []
+lst = {}
 # Обрабатываем Единицы измерения
-lst = delete_repeat(n_data, 1)
-print(insert_data(lst, 1))
-# Обрабатываем Ингридиенты
-lst = delete_repeat(n_data, 2)
-print(insert_data(lst, 2))
+lst = get_dictionary(n_data)
+print(insert_data(lst))

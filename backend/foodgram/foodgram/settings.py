@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'users.apps.UsersConfig',  # Приложение пользователей разширенное
+    'users',  # Приложение пользователей разширенное
     'api.apps.ApiConfig',
 ]
 
@@ -116,6 +116,8 @@ STATIC_DIRS = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'users.User'
 
 STATICFILES_DIRS = [(os.path.join(BASE_DIR, 'static'))]
 

@@ -1,20 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import (Favorite_recipes, Follow, Ingredients, Ingredients_list,
-                     Recipes, Shoping_list, Tags, Tags_list, Unit_of_measure)
-
-admin.site.unregister(User)  # Отменяем для панели администрирования
-
-
-@admin.register(User)  # Добавляем поля для поиска в модель User
-class CustomUserAdmin(UserAdmin):
-    list_filter = ('username', 'email', )
-    search_fields = ('username', 'email', )
+                     Recipes, Shoping_list, Tags, Tags_list)
 
 
 class RecipesTagListFilter(admin.SimpleListFilter):
@@ -35,12 +24,6 @@ class RecipesTagListFilter(admin.SimpleListFilter):
         if tag_id:
             return queryset.filter(tags_list__tag_id=tag_id)
         return queryset
-
-
-class UninAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'unit_name',)
-    search_fields = ('unit_name',)
-    list_filter = ['unit_name', RecipesTagListFilter]
 
 
 class RecipesAdmin(admin.ModelAdmin):
@@ -89,24 +72,7 @@ class FavoriteRecipesAdmin(admin.ModelAdmin):
 
 class IngredientsAdmin(admin.ModelAdmin):
     list_filter = ('ingr_name',)
-    list_display = ('pk', 'ingr_name', 'get_unit_of_measure',)
-    readonly_fields = ('get_unit_of_measure',)
-
-    def get_unit_of_measure(self, object):
-
-        try:
-            get_object_or_404(Ingredients_list, ingr_id=object)
-            unit = Ingredients_list.objects.filter(
-                ingr_id=object
-            ).select_related('unit_id')
-            string = ''
-            for i in unit:
-                string = string + i.unit_id.unit_name
-            return string
-        except Exception:
-            return '-'
-
-    get_unit_of_measure.short_description = 'Единицы измерения'
+    list_display = ('pk', 'ingr_name', 'measurement_unit',)
 
 
 class TagsAdmin(admin.ModelAdmin):
@@ -118,7 +84,7 @@ class TagsListAdmin(admin.ModelAdmin):
 
 
 class Ingredients_listAdmin(admin.ModelAdmin):
-    list_display = ['recipes_id', 'ingr_id', 'unit_id']
+    list_display = ['recipes_id', 'ingr_id', 'quantity']
 
 
 admin.site.site_header = 'Админ-панель сайта рецетов'
@@ -127,7 +93,6 @@ admin.site.site_title = 'Админ-панель сайта рецетов'
 admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Tags, TagsAdmin)
 admin.site.register(Tags_list, TagsListAdmin)
-admin.site.register(Unit_of_measure, UninAdmin)
 admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Ingredients_list, Ingredients_listAdmin)
 admin.site.register(Shoping_list)
