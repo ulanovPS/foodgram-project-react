@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -126,9 +127,14 @@ class Ingredients_list(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Ингридиент'
     )  # Номер ингридиента
-    quantity = models.IntegerField(
+    quantity = models.PositiveSmallIntegerField(
         verbose_name='Колличество ингридиента',
-        null=True
+        validators=[
+            MinValueValidator(
+                1,
+                'Минимальное значение >= 1'
+            )
+        ],
     )
 
     def __str__(self):
@@ -168,6 +174,7 @@ class Favorite_recipes(models.Model):
 
     class Meta:
         verbose_name_plural = 'Любимые рецепты'
+
 
 class Follow(models.Model):
     """ Подписка на автора рецептов """
