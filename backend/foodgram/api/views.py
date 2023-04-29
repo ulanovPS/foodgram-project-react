@@ -1,3 +1,4 @@
+from djoser.views import UserViewSet
 from rest_framework import mixins, viewsets
 
 from grocery_assistant.models import Ingredients, Tags
@@ -17,11 +18,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientsSerializer
 
 
-class UserViewSet(
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
-):
+class UserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = CustomPagination

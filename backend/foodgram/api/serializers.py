@@ -1,3 +1,4 @@
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from grocery_assistant.models import Ingredients, Tags
@@ -20,7 +21,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
         model = Ingredients
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
