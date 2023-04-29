@@ -9,17 +9,20 @@ class Tags(models.Model):
     tag_name = models.CharField(
         verbose_name='Тег',
         max_length=256,
-        db_index=True
+        db_index=True,
+        unique=True,
     )  # Название тега
     color = models.CharField(
         verbose_name='Цвет тега',
         max_length=16,
-        db_index=True
+        db_index=True,
+        unique=True,
     )  # Цвет тега
     slug = models.SlugField(
         max_length=20,
         db_index=True,
-        verbose_name='Slag тег'
+        verbose_name='Slag тег',
+        unique=True,
     )  # Slag тег
 
     def __str__(self):
