@@ -95,7 +95,8 @@ class Recipes(models.Model):
         return self.recipe_name
 
     class Meta:
-        verbose_name_plural = 'Рецепты'
+        verbose_name_plural = 'Рецепты',
+        ordering = ['-public_date', 'recipe_name']
 
 
 class Tags_list(models.Model):
