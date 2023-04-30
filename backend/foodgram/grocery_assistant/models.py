@@ -58,7 +58,8 @@ class Recipes(models.Model):
     user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь'
+        verbose_name='Пользователь',
+        related_name='author_recipes'
     )  # Автор рецепта
     recipe_name = models.CharField(
         verbose_name='Рецепт',
@@ -103,7 +104,8 @@ class Ingredients_list(models.Model):
     recipes_id = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
+        related_name='recipes_list'
     )  # Номер рецепта
     ingr_id = models.ForeignKey(
         Ingredients,
@@ -132,11 +134,13 @@ class Shoping_list(models.Model):
     """ Список рецептов для которых надо составить список покупок """
     user_id = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='user_shoping_list'
     )  # Пользователь
     recipes_id = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='recipes_shoping_list'
     )  # Номер рецепта
 
     class Meta:
@@ -149,11 +153,13 @@ class Favorite_recipes(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Пользовтель',
+        related_name='user_favorite_recipes'
     )  # Пользователь
     recipes_id = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
+        related_name='recipes_favorite'
     )  # Номер рецепта
 
     class Meta:
