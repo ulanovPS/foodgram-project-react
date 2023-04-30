@@ -108,7 +108,8 @@ class Ingredients_list(models.Model):
     ingr_id = models.ForeignKey(
         Ingredients,
         on_delete=models.CASCADE,
-        verbose_name='Ингридиент'
+        verbose_name='Ингридиент',
+        related_name='ingredients_lists'
     )  # Номер ингридиента
     quantity = models.PositiveSmallIntegerField(
         verbose_name='Колличество ингридиента',
