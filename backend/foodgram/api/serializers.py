@@ -1,7 +1,7 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from grocery_assistant.models import Ingredients, Tags
+from grocery_assistant.models import Ingredients, Tags, Follow
 from users.models import User
 
 
@@ -21,20 +21,26 @@ class IngredientsSerializer(serializers.ModelSerializer):
         model = Ingredients
 
 
-class UserSerializer(UserSerializer):
+class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
+        model = User
         fields = (
             'email',
             'id',
             'username',
             'first_name',
             'last_name',
-            'is_subscribed',
+            'password',
+            'is_subscribed'
         )
-        model = User
+        extra_kwargs = {'password': {'write_only': True},
+                        'is_subscribed': {'read_only': True}}
 
     def get_is_subscribed(self, obj):
-
-        return 'test'
+        user = self.context.get('request').user
+        if not user.is_anonymous:
+            return Follow.objects.filter(user_id=user, author=obj).exists()
+        return False
+        

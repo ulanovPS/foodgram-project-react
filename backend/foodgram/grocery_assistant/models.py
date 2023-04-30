@@ -86,37 +86,16 @@ class Recipes(models.Model):
         Ingredients,
         through='Ingredients_list'
     )
-    tags_lists = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tags,
-        through='Tags_list'
     )
 
     def __str__(self):
         return self.recipe_name
 
     class Meta:
-        verbose_name_plural = 'Рецепты',
+        verbose_name_plural = 'Рецепты'
         ordering = ['-public_date', 'recipe_name']
-
-
-class Tags_list(models.Model):
-    """ Список тегов на рецепт, сводная таблица """
-    recipes_id = models.ForeignKey(
-        Recipes,
-        on_delete=models.CASCADE,
-        verbose_name='Рецепт'
-    )  # Номер рецепта
-    tag_id = models.ForeignKey(
-        Tags,
-        on_delete=models.CASCADE,
-        verbose_name='Тег'
-    )  # Номер тега
-
-    def __str__(self):
-        return f'{self.recipes_id} {self.tag_id}'
-
-    class Meta:
-        verbose_name_plural = 'Список тегов'
 
 
 class Ingredients_list(models.Model):

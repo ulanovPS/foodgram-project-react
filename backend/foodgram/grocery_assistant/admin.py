@@ -3,7 +3,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import (Favorite_recipes, Follow, Ingredients, Ingredients_list,
-                     Recipes, Shoping_list, Tags, Tags_list)
+                     Recipes, Shoping_list, Tags)
+
+
+class IngredientsInline(admin.TabularInline):
+    model = Ingredients_list
+    extra = 3
 
 
 class RecipesTagListFilter(admin.SimpleListFilter):
@@ -27,7 +32,7 @@ class RecipesTagListFilter(admin.SimpleListFilter):
 
 
 class RecipesAdmin(admin.ModelAdmin):
-    list_filter = ['recipe_name', 'user_id__username', RecipesTagListFilter]
+    list_filter = ['recipe_name', 'user_id__username', 'tags']
     list_display = (
         'pk',
         'recipe_name',
@@ -36,7 +41,8 @@ class RecipesAdmin(admin.ModelAdmin):
         'get_photo',
         'description',
         'cooking_time',
-        'public_date'
+        'public_date',
+        'get_products',
     )
     fields = (
         'recipe_name',
@@ -45,12 +51,17 @@ class RecipesAdmin(admin.ModelAdmin):
         'get_photo',
         'description',
         'cooking_time',
-        'public_date'
+        'public_date',
+        'tags',
     )
     readonly_fields = ('public_date', 'get_photo')
     save_on_top = True
     empty_value_display = '-пусто-'
     ordering = ['pk', 'recipe_name']
+    inlines = [IngredientsInline]
+
+    def get_products(self, obj):
+        return "\n".join([p.tag_name for p in obj.tags.all()])
 
     def get_photo(self, object):
         if object.image:
@@ -77,10 +88,8 @@ class IngredientsAdmin(admin.ModelAdmin):
 
 class TagsAdmin(admin.ModelAdmin):
     list_display = ['pk', 'tag_name', 'color', 'slug']
-
-
-class TagsListAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'tag_id', 'recipes_id']
+    list_filter = ('tag_name',)
+    search_fields = ('tag_name',)
 
 
 class Ingredients_listAdmin(admin.ModelAdmin):
@@ -92,7 +101,6 @@ admin.site.site_title = 'Админ-панель сайта рецетов'
 
 admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Tags, TagsAdmin)
-admin.site.register(Tags_list, TagsListAdmin)
 admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Ingredients_list, Ingredients_listAdmin)
 admin.site.register(Shoping_list)
