@@ -1,6 +1,9 @@
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from grocery_assistant.models import Follow, Ingredients, Recipes, Tags, Shoping_list, Favorite_recipes, Ingredients_list
+from grocery_assistant.models import (Favorite_recipes, Follow, Ingredients,
+                                      Ingredients_list, Recipes, Shoping_list,
+                                      Tags)
 from users.models import User
 
 
@@ -20,7 +23,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
         model = Ingredients
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -48,7 +51,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TagsSerializer(serializers.ModelSerializer):
-    name = serializers.StringRelatedField(read_only=True, source='tag_name')
+    name = serializers.StringRelatedField(
+        read_only=True,
+        source='tag_name'
+    )
+
     class Meta:
         fields = (
             'id',
@@ -62,31 +69,41 @@ class TagsSerializer(serializers.ModelSerializer):
 class Ingredients_listSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredients.objects.all(),
-        source='ingredients_lists'
+        source='ingr_id')
+    name = serializers.ReadOnlyField(
+        source='ingr_id.ingr_name'
     )
-    # name = serializers.ReadOnlyField(source='ingredients.ingr_name')
-    # measurement_unit = serializers.ReadOnlyField(source='ingredients.measurement_unit')
-    # amount = serializers.IntegerField(source='quantity')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingr_id.measurement_unit'
+    )
+    amount = serializers.IntegerField(
+        source='quantity'
+    )
+
     class Meta:
         model = Ingredients_list
-        # fields = '__all__'
-        # model = Ingredients
-        # fields = ('id', 'ingr_name')
-        fields = ('id',)
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    text = serializers.StringRelatedField(read_only=True, source='description')
-    name = serializers.StringRelatedField(read_only=True, source='recipe_name')
+    text = serializers.StringRelatedField(
+        read_only=True,
+        source='description'
+    )
+    name = serializers.StringRelatedField(
+        read_only=True,
+        source='recipe_name'
+    )
     tags = TagsSerializer(read_only=True, many=True)
     is_in_shopping_cart = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
-    # author = serializers.StringRelatedField(read_only=True, source='user_id')
     author = UserSerializer(source='user_id')
     ingredients = Ingredients_listSerializer(
         many=True,
-        source='ingredients_lists',
-        read_only=True)
+        source='recipes_list',
+        read_only=True
+    )
+
     class Meta:
         fields = (
             'id',

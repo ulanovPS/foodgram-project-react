@@ -123,11 +123,11 @@ class Ingredients_list(models.Model):
         ],
     )
 
-    def __str__(self):
-        return f'{self.recipes_id} {self.ingr_id}'
-
     class Meta:
         verbose_name_plural = 'Список ингридиентов'
+
+    def __str__(self):
+        return f'{self.recipes_id} {self.ingr_id}'
 
 
 class Shoping_list(models.Model):

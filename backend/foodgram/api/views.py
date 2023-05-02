@@ -1,12 +1,14 @@
 from djoser.views import UserViewSet
 from rest_framework import mixins, permissions, viewsets
 
-from grocery_assistant.models import Ingredients, Tags, Recipes
+from grocery_assistant.models import Ingredients, Recipes, Tags
 from users.models import User
 
 from .paginations import CustomPagination
-from .serializers import (UserSerializer, IngredientsSerializer,
-                          RecipesSerializer, TagsSerializer)
+from .serializers import (IngredientsSerializer, RecipesSerializer,
+                          TagsSerializer, UserSerializer)
+
+from api.permissions import GuestIsReadOnlyAdminOrUserFullAccess
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -21,13 +23,23 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = CustomPagination
+    permission_classes = (GuestIsReadOnlyAdminOrUserFullAccess, )
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesSerializer
     pagination_class = CustomPagination
+
+
+"""
+    def get_serializer_class(self):
+        print(self.request.method)
+        if self.request.method in SAFE_METHODS:
+            return RecipesSerializerList
+        return
+"""

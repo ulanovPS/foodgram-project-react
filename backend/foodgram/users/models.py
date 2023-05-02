@@ -41,14 +41,16 @@ class User(AbstractUser):
         verbose_name='Пароль',
         max_length=150,
     )
-
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name']
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN
 
     def __str__(self):
         return self.username
