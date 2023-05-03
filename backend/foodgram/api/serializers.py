@@ -1,4 +1,7 @@
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField 
 from rest_framework import serializers
 
 from grocery_assistant.models import (Favorite_recipes, Follow, Ingredients,
@@ -23,7 +26,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
         model = Ingredients
 
 
-class UserSerializer(UserSerializer):
+class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -67,9 +70,9 @@ class TagsSerializer(serializers.ModelSerializer):
 
 
 class Ingredients_listSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredients.objects.all(),
-        source='ingr_id')
+    id = serializers.ReadOnlyField(
+        source='ingr_id.id'
+    )
     name = serializers.ReadOnlyField(
         source='ingr_id.ingr_name'
     )
@@ -85,7 +88,7 @@ class Ingredients_listSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class RecipesSerializer(serializers.ModelSerializer):
+class RecipesSerializerList(serializers.ModelSerializer):
     text = serializers.StringRelatedField(
         read_only=True,
         source='description'
@@ -130,3 +133,57 @@ class RecipesSerializer(serializers.ModelSerializer):
         if not user.is_anonymous:
             return Favorite_recipes.objects.filter(recipes_id=obj).exists()
         return False
+
+
+class AddIngredientsSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredients.objects.all(),
+        source='ingr_id.id'
+    )
+    amount = serializers.IntegerField(source='quantity')
+    class Meta:
+        model = Ingredients_list
+        fields = ('id', 'amount')
+
+class RecipesSerializerAdd(serializers.ModelSerializer):
+    ingredients = AddIngredientsSerializer(
+        many=True,
+        read_only=True
+    )
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tags.objects.all(),
+        many=True,
+    )
+    image = Base64ImageField()
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault(),
+        source='user_id'
+    )
+    text = serializers.ReadOnlyField(
+        source='description',
+    )
+    name = serializers.ReadOnlyField(
+        source='recipe_name'
+    )
+
+    class Meta:
+        fields = (
+            'ingredients',
+            'tags',
+            'image',
+            'name',
+            'text',
+            'cooking_time',
+            'author'
+        )
+        model = Recipes
+"""
+    def create(self, validated_data):
+            
+        achievements = validated_data.pop('ingredients')
+        rec = Recipes.objects.create(**validated_data)
+        for achievement in achievements:
+            val_ingr_id, status = Ingredients.objects.get_or_create(**achievement)
+            Ingredients_list.objects.create(ingr_id=val_ingr_id, recipes_id=rec)
+        return rec 
+"""
