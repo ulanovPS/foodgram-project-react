@@ -138,7 +138,6 @@ class RecipesSerializerList(serializers.ModelSerializer):
 class AddIngredientsSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredients.objects.all(),
-        source='ingr_id.id'
     )
     amount = serializers.IntegerField(source='quantity')
     class Meta:
@@ -148,7 +147,7 @@ class AddIngredientsSerializer(serializers.ModelSerializer):
 class RecipesSerializerAdd(serializers.ModelSerializer):
     ingredients = AddIngredientsSerializer(
         many=True,
-        read_only=True
+        source='recipes_list'
     )
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tags.objects.all(),
@@ -159,10 +158,10 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault(),
         source='user_id'
     )
-    text = serializers.ReadOnlyField(
+    text = serializers.CharField(
         source='description',
     )
-    name = serializers.ReadOnlyField(
+    name = serializers.CharField(
         source='recipe_name'
     )
 
@@ -177,13 +176,18 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
             'author'
         )
         model = Recipes
-"""
+        depth = 1
+
     def create(self, validated_data):
-            
-        achievements = validated_data.pop('ingredients')
-        rec = Recipes.objects.create(**validated_data)
-        for achievement in achievements:
-            val_ingr_id, status = Ingredients.objects.get_or_create(**achievement)
-            Ingredients_list.objects.create(ingr_id=val_ingr_id, recipes_id=rec)
-        return rec 
-"""
+        request = self.context.get('request')
+        tags = validated_data.pop('tags')
+        ingredients_data = validated_data.pop('recipes_list')
+        recipe = Recipes.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        for ingredient in ingredients_data:
+            Ingredients_list.objects.create(
+                recipes_id=recipe,
+                ingr_id=ingredient.get('id'),
+                quantity=ingredient.get('quantity')
+            ).save()
+        return recipe
