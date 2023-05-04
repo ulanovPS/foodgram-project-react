@@ -138,6 +138,7 @@ class RecipesSerializerList(serializers.ModelSerializer):
 class AddIngredientsSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredients.objects.all(),
+        source='ingr_id'
     )
     amount = serializers.IntegerField(source='quantity')
     class Meta:
@@ -187,7 +188,7 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
         for ingredient in ingredients_data:
             Ingredients_list.objects.create(
                 recipes_id=recipe,
-                ingr_id=ingredient.get('id'),
+                ingr_id=ingredient.get('ingr_id'),
                 quantity=ingredient.get('quantity')
             ).save()
         return recipe

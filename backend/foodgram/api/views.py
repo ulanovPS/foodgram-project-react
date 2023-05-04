@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from api.permissions import GuestIsReadOnlyAdminOrOwnerFullAccess
+from api.permissions import GuestIsReadOnlyAdminOrOwnerFullAccess, GuestIsReadOnlyAdminOrUserFullAccess
 from grocery_assistant.models import Ingredients, Recipes, Tags
 from users.models import User
 
@@ -53,7 +53,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesSerializerList
     pagination_class = CustomPagination
-    permission_classes = (GuestIsReadOnlyAdminOrOwnerFullAccess, )
+    permission_classes = (GuestIsReadOnlyAdminOrUserFullAccess, )
 
     def get_serializer_class(self):
         print(self.request.method)
