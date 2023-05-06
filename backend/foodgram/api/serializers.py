@@ -155,10 +155,6 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
         many=True,
     )
     image = Base64ImageField()
-    author = serializers.HiddenField(
-        default=serializers.CurrentUserDefault(),
-        source='user_id'
-    )
     text = serializers.CharField(
         source='description',
     )
@@ -174,13 +170,10 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
             'name',
             'text',
             'cooking_time',
-            'author'
         )
         model = Recipes
-        depth = 1
 
     def create(self, validated_data):
-        request = self.context.get('request')
         tags = validated_data.pop('tags')
         ingredients_data = validated_data.pop('recipes_list')
         recipe = Recipes.objects.create(**validated_data)
@@ -191,4 +184,18 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
                 ingr_id=ingredient.get('ingr_id'),
                 quantity=ingredient.get('quantity')
             ).save()
+        
+        return recipe
+
+    def to_representation(self, instance):
+        recipe = super().to_representation(instance)
+        recipe = RecipesSerializerList(
+            instance,
+            context={'request': self.context.get('request')}
+        ).data
+        val_author = UserSerializer(
+            instance.user_id,
+            context={'request': self.context.get('user')}
+        ).data
+        recipe['author'] = val_author
         return recipe
