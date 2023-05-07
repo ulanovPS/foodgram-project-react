@@ -191,3 +191,6 @@ class Follow(models.Model):
                 fields=['user_id', 'author'],
                 name='unique_following')
         ]
+
+        def __str__(self):
+            return f'Пользователь {self.user_id} подписан на {self.author}'
