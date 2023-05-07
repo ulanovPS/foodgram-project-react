@@ -1,9 +1,10 @@
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
 from grocery_assistant.models import (Favorite_recipes, Follow, Ingredients,
                                       Ingredients_list, Recipes, Shoping_list,
                                       Tags)
-from rest_framework import serializers
 from users.models import User
 
 
@@ -210,3 +211,21 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
             context={'request': self.context.get('request')}
         ).data
         return recipe
+
+
+class FavoriteRecipesSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(
+        source='recipes_id.recipe_name',
+        read_only=True)
+    image = serializers.ImageField(
+        source='recipes_id.image',
+        read_only=True)
+    coocking_time = serializers.IntegerField(
+        source='recipes_id.cooking_time',
+        read_only=True)
+    id = serializers.PrimaryKeyRelatedField(
+        source='recipes_id',
+        read_only=True)
+    class Meta:
+        model = Favorite_recipes
+        fields = ('id', 'name', 'image', 'coocking_time')

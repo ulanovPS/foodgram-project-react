@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -152,17 +153,21 @@ class Favorite_recipes(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Пользовтель',
-        related_name='user_favorite_recipes'
+        related_name='favorite'
     )  # Пользователь
     recipes_id = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
-        related_name='recipes_favorite'
+        related_name='favorite'
     )  # Номер рецепта
 
     class Meta:
         verbose_name_plural = 'Любимые рецепты'
+        verbose_name = 'Любимые рецепты'
+        constraints = [models.UniqueConstraint(
+            fields=['user_id', 'recipes_id'],
+            name='unique_favorite')]
 
 
 class Follow(models.Model):
@@ -180,3 +185,9 @@ class Follow(models.Model):
 
     class Meta:
         verbose_name_plural = 'Подписки на автора'
+        verbose_name = 'Подписки на автора'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user_id', 'author'],
+                name='unique_following')
+        ]
