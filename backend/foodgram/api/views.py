@@ -1,11 +1,11 @@
+from api.permissions import (GuestIsReadOnlyAdminOrOwnerFullAccess,
+                             GuestIsReadOnlyAdminOrUserFullAccess)
 from djoser.views import UserViewSet
-from rest_framework import mixins, permissions, viewsets
+from grocery_assistant.models import Ingredients, Recipes, Tags
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
-
-from api.permissions import GuestIsReadOnlyAdminOrOwnerFullAccess, GuestIsReadOnlyAdminOrUserFullAccess
-from grocery_assistant.models import Ingredients, Recipes, Tags
 from users.models import User
 
 from .paginations import CustomPagination
@@ -60,3 +60,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return RecipesSerializerList
         return RecipesSerializerAdd
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)

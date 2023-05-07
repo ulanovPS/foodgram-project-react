@@ -1,12 +1,9 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
 from djoser.serializers import UserSerializer
-from drf_extra_fields.fields import Base64ImageField 
-from rest_framework import serializers
-
+from drf_extra_fields.fields import Base64ImageField
 from grocery_assistant.models import (Favorite_recipes, Follow, Ingredients,
                                       Ingredients_list, Recipes, Shoping_list,
                                       Tags)
+from rest_framework import serializers
 from users.models import User
 
 
@@ -100,7 +97,7 @@ class RecipesSerializerList(serializers.ModelSerializer):
     tags = TagsSerializer(read_only=True, many=True)
     is_in_shopping_cart = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
-    author = UserSerializer(source='user_id')
+    author = CustomUserSerializer(source='user_id')
     ingredients = Ingredients_listSerializer(
         many=True,
         source='recipes_list',
@@ -141,9 +138,11 @@ class AddIngredientsSerializer(serializers.ModelSerializer):
         source='ingr_id'
     )
     amount = serializers.IntegerField(source='quantity')
+
     class Meta:
         model = Ingredients_list
         fields = ('id', 'amount')
+
 
 class RecipesSerializerAdd(serializers.ModelSerializer):
     ingredients = AddIngredientsSerializer(
@@ -161,11 +160,16 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
     name = serializers.CharField(
         source='recipe_name'
     )
+    author = CustomUserSerializer(
+        source='user_id',
+        read_only=True
+    )
 
     class Meta:
         fields = (
             'ingredients',
             'tags',
+            'author',
             'image',
             'name',
             'text',
@@ -184,8 +188,20 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
                 ingr_id=ingredient.get('ingr_id'),
                 quantity=ingredient.get('quantity')
             ).save()
-        
         return recipe
+
+    def update(self, instance, validated_data):
+        tags = validated_data.pop('tags')
+        ingredients_data = validated_data.pop('recipes_list')
+        instance.ingredients_lists.clear()
+        instance.tags.set(tags)
+        for ingredient in ingredients_data:
+            Ingredients_list.objects.update_or_create(
+                recipes_id=instance,
+                ingr_id=ingredient.get('ingr_id'),
+                quantity=ingredient.get('quantity')
+            )
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         recipe = super().to_representation(instance)
@@ -193,9 +209,4 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
             instance,
             context={'request': self.context.get('request')}
         ).data
-        val_author = UserSerializer(
-            instance.user_id,
-            context={'request': self.context.get('user')}
-        ).data
-        recipe['author'] = val_author
         return recipe
