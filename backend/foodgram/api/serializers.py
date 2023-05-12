@@ -123,13 +123,13 @@ class RecipesSerializerList(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
-            return Shoping_list.objects.filter(recipes_id=obj).exists()
+            return Shoping_list.objects.filter(recipes_id=obj, user_id=user.id).exists()
         return False
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
-            return Favorite_recipes.objects.filter(recipes_id=obj).exists()
+            return Favorite_recipes.objects.filter(recipes_id=obj, user_id=user.id).exists()
         return False
 
 
@@ -226,6 +226,73 @@ class FavoriteRecipesSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         source='recipes_id',
         read_only=True)
+
     class Meta:
         model = Favorite_recipes
         fields = ('id', 'name', 'image', 'coocking_time')
+
+
+class RecipesSerializerShortList(serializers.ModelSerializer):
+    name = serializers.CharField(source='recipe_name')
+
+    class Meta:
+        model = Recipes
+        fields = ('id', 'name', 'image', 'cooking_time',)
+
+
+class FollowRecipesSerializer(serializers.ModelSerializer):
+    email = serializers.ReadOnlyField(source='author.email')
+    id = serializers.ReadOnlyField(source='author.id')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Follow
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if not user.is_anonymous:
+            return Follow.objects.filter(
+                user_id=user,
+                author=obj.author).exists()
+        return False
+
+    def get_recipes_count(self, obj):
+        test = Recipes.objects.filter(user_id=obj.author).count()
+        return Recipes.objects.filter(user_id=obj.author).count()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = Recipes.objects.filter(user_id=obj.author)
+        # Значение должнобыть числовым и >0
+        if limit and limit.isdigit():
+            recipes = recipes[:int(limit)]
+        return RecipesSerializerShortList(recipes, many=True).data
+
+
+class ShopingListSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(
+        source='recipes_id',
+        read_only=True)
+    name = serializers.ReadOnlyField(
+        source='recipes_id.recipe_name',
+        read_only=True
+    )
+    image = serializers.ImageField(
+        source='recipes_id.image',
+        read_only=True
+    )
+    cooking_time = serializers.IntegerField(
+        source='recipes_id.cooking_time',
+        read_only=True)
+
+    class Meta:
+        model = Shoping_list
+        fields = ('id', 'name', 'image', 'cooking_time')

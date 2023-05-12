@@ -35,10 +35,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'users',  # Приложение пользователей разширенное
-    'api',
+    'api', # Приложение сервиса API
     'corsheaders',
     'rest_framework.authtoken',
     'djoser',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

@@ -1,16 +1,17 @@
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import SearchFilter
 
-from grocery_assistant.models import Recipes, User, Tags
+from grocery_assistant.models import Recipes, Tags, User
 
 
-class IngredientSearchFilter(SearchFilter):
+class IngredientNameFilter(SearchFilter):
     search_param = 'name'
 
 
 class RecipeFilter(FilterSet):
     author = filters.ModelChoiceFilter(
-        queryset=User.objects.all())
+        queryset=User.objects.all()
+    )
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',

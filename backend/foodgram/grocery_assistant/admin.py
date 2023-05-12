@@ -96,6 +96,14 @@ class Ingredients_listAdmin(admin.ModelAdmin):
     list_display = ['recipes_id', 'ingr_id', 'quantity']
 
 
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'user_id', 'author']
+
+
+class ShopingListAdmin(admin.ModelAdmin):
+    list_display = ['user_id', 'recipes_id']
+
+
 admin.site.site_header = 'Админ-панель сайта рецетов'
 admin.site.site_title = 'Админ-панель сайта рецетов'
 
@@ -103,6 +111,6 @@ admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Tags, TagsAdmin)
 admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Ingredients_list, Ingredients_listAdmin)
-admin.site.register(Shoping_list)
+admin.site.register(Shoping_list, ShopingListAdmin)
 admin.site.register(Favorite_recipes, FavoriteRecipesAdmin)
-admin.site.register(Follow)
+admin.site.register(Follow, FollowAdmin)

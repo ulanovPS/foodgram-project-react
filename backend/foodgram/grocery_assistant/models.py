@@ -135,16 +135,19 @@ class Shoping_list(models.Model):
     user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='user_shoping_list'
+        related_name='shoping_list'
     )  # Пользователь
     recipes_id = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='recipes_shoping_list'
+        related_name='shoping_list'
     )  # Номер рецепта
 
     class Meta:
         verbose_name_plural = 'Список покупок'
+        constraints = [models.UniqueConstraint(
+            fields=['user_id', 'recipes_id'],
+            name='unique_cart')]
 
 
 class Favorite_recipes(models.Model):
@@ -167,7 +170,7 @@ class Favorite_recipes(models.Model):
         verbose_name = 'Любимые рецепты'
         constraints = [models.UniqueConstraint(
             fields=['user_id', 'recipes_id'],
-            name='unique_favorite')]
+            name='%(app_label)s_%(class)s_unique')]
 
 
 class Follow(models.Model):
@@ -186,10 +189,11 @@ class Follow(models.Model):
     class Meta:
         verbose_name_plural = 'Подписки на автора'
         verbose_name = 'Подписки на автора'
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['user_id', 'author'],
-                name='unique_following')
+                name='%(app_label)s_%(class)s_unique')
         ]
 
         def __str__(self):
