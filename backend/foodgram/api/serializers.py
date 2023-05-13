@@ -1,15 +1,18 @@
+from django.core import exceptions
+from django.core.validators import MinValueValidator
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from grocery_assistant.models import (Favorite_recipes, Follow, Ingredients,
                                       Ingredients_list, Recipes, Shoping_list,
-                                      Tags)
+                                      Tags, COLOR_TAG)
 from users.models import User
 
 
 class TagsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='tag_name')
+    color = serializers.ChoiceField(choices=COLOR_TAG)
 
     class Meta:
         fields = ('id', 'name', 'color', 'slug')
@@ -138,7 +141,15 @@ class AddIngredientsSerializer(serializers.ModelSerializer):
         queryset=Ingredients.objects.all(),
         source='ingr_id'
     )
-    amount = serializers.IntegerField(source='quantity')
+    amount = serializers.IntegerField(
+        source='quantity',
+        validators=(
+            MinValueValidator(
+                1,
+                message='Минимальное значение >= 1'
+            ),
+        ),
+    )
 
     class Meta:
         model = Ingredients_list
@@ -165,6 +176,14 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
         source='user_id',
         read_only=True
     )
+    cooking_time = serializers.IntegerField(
+        validators=(
+            MinValueValidator(
+                1,
+                message='Время приготовления >= 1'
+            ),
+        ),
+    )
 
     class Meta:
         fields = (
@@ -177,6 +196,16 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
             'cooking_time',
         )
         model = Recipes
+
+    def validate_ingredients(self, value):
+        ingredients = self.initial_data.get('ingredients')
+        ingredients = [item['id'] for item in ingredients]
+        for ingredient in ingredients:
+            if ingredients.count(ingredient) > 1:
+                raise exceptions.ValidationError(
+                    'Добавлены два одинаковых ингридиента'
+                )
+        return value
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')

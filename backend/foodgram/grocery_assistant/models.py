@@ -4,6 +4,11 @@ from django.db import models
 from users.models import User
 
 
+COLOR_TAG = (
+        ('#000000', 'Черный'),
+        ('#ffa500', 'Оранжевый'),
+    )
+
 class Tags(models.Model):
     """ Теги для поиска рецепта """
     tag_name = models.CharField(
@@ -17,6 +22,8 @@ class Tags(models.Model):
         max_length=16,
         db_index=True,
         unique=True,
+        default=COLOR_TAG[1],
+        choices=COLOR_TAG,
     )  # Цвет тега
     slug = models.SlugField(
         max_length=20,

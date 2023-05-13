@@ -8,9 +8,10 @@ class IngredientNameFilter(SearchFilter):
     search_param = 'name'
 
 
-class RecipeFilter(FilterSet):
+class RecipesFilter(FilterSet):
     author = filters.ModelChoiceFilter(
-        queryset=User.objects.all()
+        queryset=User.objects.all(),
+        field_name='user_id'
     )
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
@@ -28,10 +29,10 @@ class RecipeFilter(FilterSet):
 
     def filter_is_favorited(self, queryset, name, value):
         if self.request.user.is_authenticated and value:
-            return queryset.filter(favorite__author=self.request.user)
+            return queryset.filter(favorite__user_id=self.request.user)
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         if self.request.user.is_authenticated and value:
-            return queryset.filter(shopping_cart__author=self.request.user)
+            return queryset.filter(shoping_list__user_id=self.request.user)
         return queryset

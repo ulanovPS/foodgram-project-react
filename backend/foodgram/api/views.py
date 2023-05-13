@@ -8,7 +8,7 @@ from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
 
-from api.filters import IngredientNameFilter, RecipeFilter
+from api.filters import IngredientNameFilter, RecipesFilter
 from api.permissions import (GuestIsReadOnlyAdminOrOwnerFullAccess,
                              GuestIsReadOnlyAdminOrUserFullAccess)
 from grocery_assistant.models import (Favorite_recipes, Follow, Ingredients,
@@ -134,8 +134,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
     serializer_class = RecipesSerializerList
     pagination_class = CustomPagination
     permission_classes = (GuestIsReadOnlyAdminOrOwnerFullAccess, )
-    # filter_backends = (DjangoFilterBackend, )
-    filterset_class = RecipeFilter
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = RecipesFilter
 
     def get_serializer_class(self):
         print(self.request.method)
