@@ -9,7 +9,7 @@ def read_f(filename):
         return json.load(file)
 
 
-""" Удаление поторов в кортеже """
+""" Удаление повторов в кортеже """
 
 
 def get_dictionary(n_data):

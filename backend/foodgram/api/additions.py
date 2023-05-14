@@ -5,7 +5,7 @@ from grocery_assistant.models import Ingredients_list
 
 
 def download_product(self, request, author):
-    # Скачивание списка продуктов для выбранных рецептов пользователя.
+    """ Сохранение списка рецептов в формате txt """
     sum_group_by_ingr_id = Ingredients_list.objects.filter(
         recipes_id__shoping_list__user_id=author
     ).values(

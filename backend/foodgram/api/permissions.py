@@ -2,10 +2,7 @@ from rest_framework import permissions
 
 
 class GuestIsReadOnlyAdminOrOwnerFullAccess(permissions.BasePermission):
-    """
-    GUEST - только просмотр.
-    ADMIN - или OWNER все методы.
-    """
+    """ GUEST - только просмотр, ADMIN - или OWNER все методы """
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)
@@ -18,10 +15,7 @@ class GuestIsReadOnlyAdminOrOwnerFullAccess(permissions.BasePermission):
 
 
 class GuestIsReadOnlyAdminOrUserFullAccess(permissions.BasePermission):
-    """
-    GUEST - только просмотр.
-    ADMIN или USER - возможны остальные методы.
-    """
+    """ GUEST - только просмотр, ADMIN или USER - возможны остальные методы """
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True

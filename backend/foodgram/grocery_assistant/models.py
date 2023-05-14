@@ -3,11 +3,11 @@ from django.db import models
 
 from users.models import User
 
-
 COLOR_TAG = (
-        ('#000000', 'Черный'),
-        ('#ffa500', 'Оранжевый'),
-    )
+    ('#000000', 'Черный'),
+    ('#ffa500', 'Оранжевый'),
+)
+
 
 class Tags(models.Model):
     """ Теги для поиска рецепта """

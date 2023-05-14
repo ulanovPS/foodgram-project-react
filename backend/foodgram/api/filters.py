@@ -5,10 +5,12 @@ from grocery_assistant.models import Recipes, Tags, User
 
 
 class IngredientNameFilter(SearchFilter):
+    """ Фильтр ингридиентов """
     search_param = 'name'
 
 
 class RecipesFilter(FilterSet):
+    """ Фильтр рецептов по тегам, автору, избранное и покупок """
     author = filters.ModelChoiceFilter(
         queryset=User.objects.all(),
         field_name='user_id'

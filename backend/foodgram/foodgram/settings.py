@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'users',  # Приложение пользователей разширенное
-    'api', # Приложение сервиса API
+    'api',  # Приложение сервиса API
     'corsheaders',
     'rest_framework.authtoken',
     'djoser',
