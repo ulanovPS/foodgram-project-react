@@ -33,8 +33,8 @@ def insert_data(lst):
             # Добавляем записи в таблицу ингридиентов
             cursor.execute("""
                 SELECT id
-                FROM grocery_assistant_ingredients
-                WHERE ingr_name = ?""", (lst[i], ))
+                FROM grocery_assistant_ingredient
+                WHERE name = ?""", (lst[i], ))
             row = cursor.fetchone()
             if row:
                 print(
@@ -42,8 +42,8 @@ def insert_data(lst):
                 )
             else:
                 cursor_insert.execute(
-                    """INSERT INTO grocery_assistant_ingredients
-                    (ingr_name, measurement_unit)
+                    """INSERT INTO grocery_assistant_ingredient
+                    (name, measurement_unit)
                     VALUES (?, ?)""",
                     (i, lst[i], )
                 )

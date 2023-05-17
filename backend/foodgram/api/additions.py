@@ -1,27 +1,27 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 
-from grocery_assistant.models import Ingredients_list
+from grocery_assistant.models import IngredientRecipe
 
 
 def download_product(self, request, author):
     """ Сохранение списка рецептов в формате txt """
-    sum_group_by_ingr_id = Ingredients_list.objects.filter(
-        recipes_id__shoping_list__user_id=author
+    sum_group_by_ingredient = IngredientRecipe.objects.filter(
+        recipes__shoping_list__user=author
     ).values(
-        'ingr_id__ingr_name', 'ingr_id__measurement_unit'
+        'ingredient__name', 'ingredient__measurement_unit'
     ).annotate(
         quantity=Sum('quantity', distinct=True)).order_by('quantity')
     file_txt = """  Продуктовый помошник / Grocery_Assistant
     Автор - Уланов Павел\n
     Продукты для покупок:\n"""
     val_count = 0
-    for ingr in sum_group_by_ingr_id:
+    for ingr in sum_group_by_ingredient:
         val_count += 1
         file_txt += (
-            f'{val_count}. {ingr["ingr_id__ingr_name"]} - '
+            f'{val_count}. {ingr["ingredient__name"]} - '
             f'{ingr["quantity"]} '
-            f'{ingr["ingr_id__measurement_unit"]}\n'
+            f'{ingr["ingredient__measurement_unit"]}\n'
         )
     filename = 'shopping_list.txt'
     response = HttpResponse(file_txt, content_type='text/plain')
