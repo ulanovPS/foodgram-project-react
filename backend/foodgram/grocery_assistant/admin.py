@@ -93,7 +93,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class IngredientRecipeAdmin(admin.ModelAdmin):
-    list_display = ['recipes', 'ingredient', 'quantity']
+    list_display = ['recipes', 'ingredient', 'amount']
 
 
 class FollowAdmin(admin.ModelAdmin):

@@ -21,12 +21,9 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.getenv('DEBUG', default="False") == "True":
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = bool(os.getenv('DEBUG', default=False))
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default='*')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split()
 
 DOMAIN_NAME = None
 

@@ -11,7 +11,7 @@ def download_product(self, request, author):
     ).values(
         'ingredient__name', 'ingredient__measurement_unit'
     ).annotate(
-        quantity=Sum('quantity', distinct=True)).order_by('quantity')
+        amount=Sum('amount', distinct=True)).order_by('amount')
     file_txt = """  Продуктовый помошник / Grocery_Assistant
     Автор - Уланов Павел\n
     Продукты для покупок:\n"""
@@ -20,7 +20,7 @@ def download_product(self, request, author):
         val_count += 1
         file_txt += (
             f'{val_count}. {ingr["ingredient__name"]} - '
-            f'{ingr["quantity"]} '
+            f'{ingr["amount"]} '
             f'{ingr["ingredient__measurement_unit"]}\n'
         )
     filename = 'shopping_list.txt'

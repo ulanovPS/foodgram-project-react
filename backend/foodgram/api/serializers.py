@@ -66,9 +66,6 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
     )
-    amount = serializers.IntegerField(
-        source='quantity'
-    )
 
     class Meta:
         model = IngredientRecipe
@@ -137,7 +134,6 @@ class AddIngredientsSerializer(serializers.ModelSerializer):
         source='ingredient'
     )
     amount = serializers.IntegerField(
-        source='quantity',
         validators=(
             MinValueValidator(
                 1,
@@ -200,30 +196,34 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
                 )
         return value
 
-    def update_or_create_tag_ingredient(self, ingredients, tags, model):
-        for ingredient in ingredients:
-            IngredientRecipe.objects.update_or_create(
-                recipes=model,
+    def bulk(self, ingredients, recipes):
+        IngredientRecipe.objects.bulk_create(
+            [IngredientRecipe(
+                recipes=recipes,
                 ingredient=ingredient.get('ingredient'),
-                quantity=ingredient.get('quantity')
-            )
-        model.tags.set(tags)
+                amount=ingredient['amount']
+            )for ingredient in ingredients]
+        )
     
     def create(self, validated_data):
         """ Создание нового рецепта """
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('recipes_list')
         recipe = Recipe.objects.create(**validated_data)
-        self.update_or_create_tag_ingredient(ingredients, tags, recipe)
+        recipe.tags.set(tags)
+        self.bulk(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
         """ Изменение данных рецепта """
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('recipes_list')
+        instance.tags.clear()
+        instance.tags.set(tags)
         instance.ingredients.clear()
-        self.update_or_create_tag_ingredient(ingredients, tags, instance)
-        return super().update(instance, validated_data)
+        self.bulk(ingredients, instance)
+        instance.save()
+        return instance
 
     def to_representation(self, instance):
         """ Обрабатываем все записи и выводим """

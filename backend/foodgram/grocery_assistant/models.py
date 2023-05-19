@@ -2,12 +2,15 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.core.exceptions import ValidationError
 import webcolors
+from .validators import HexColorValidator
 
 from users.models import User
 
 
 class Tag(models.Model):
     """ Теги для поиска рецепта """
+    color_validator = HexColorValidator()
+
     name = models.CharField(
         verbose_name='Тег',
         max_length=256,
@@ -16,20 +19,14 @@ class Tag(models.Model):
     color = models.CharField(
         verbose_name='Цвет тега в HEX формате',
         max_length=16,
+        validators=[color_validator],
     )
     slug = models.SlugField(
         max_length=20,
         unique=True,
         verbose_name='Slag тег',
     )
-
-    def clean(self):
-            try:
-                self.color = webcolors.normalize_hex(self.color)
-                return self.color
-            except:
-                raise ValidationError(f"Не верно указан цвет тега! Введите в формате HEX!")
-
+                
     def __str__(self):
         return self.name
 
@@ -88,10 +85,12 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='IngredientRecipe'
+        through='IngredientRecipe',
+        verbose_name="Ингридиент"
     )
     tags = models.ManyToManyField(
         Tag,
+        verbose_name="Таг"
     )
 
     def __str__(self):
@@ -116,7 +115,7 @@ class IngredientRecipe(models.Model):
         verbose_name='Ингридиент',
         related_name='ingredients_lists'
     )
-    quantity = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Колличество ингридиента',
         validators=[
             MinValueValidator(
