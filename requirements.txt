@@ -1,6 +1,6 @@
 asgiref==3.3.2
 requests==2.26.0
-Django==3.2
+Django==3.2.19
 djangorestframework==3.12.4
 PyJWT==2.1.0
 django-filter==2.4.0
