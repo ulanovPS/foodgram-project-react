@@ -154,7 +154,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 return Response({'errors': 'Рецепт уже в избранном!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             serializer = FavoriteRecipesSerializer(data=request.data)
-
             serializer.is_valid(raise_exception=True)
             serializer.save(user=user, recipes=recipe)
         if not FavoriteRecipe.objects.filter(user=user,
