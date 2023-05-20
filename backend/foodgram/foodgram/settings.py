@@ -23,13 +23,7 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default="False") == "True"
 
-# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split()
-ALLOWED_HOSTS = [ 
-    '127.0.0.1', 
-    'web', 
-    'localhost', 
-    '*' 
-]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split()
 
 DOMAIN_NAME = None
 
