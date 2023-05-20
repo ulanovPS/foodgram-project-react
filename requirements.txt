@@ -14,3 +14,8 @@ pytest-pythonpath==0.7.3
 python-dotenv==0.19.2
 sqlparse==0.3.1
 Pillow
+django-cors-headers
+djangorestframework_simplejwt
+social-auth-app-django-5.2.0
+django-extra-fields
+webcolors
