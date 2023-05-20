@@ -8,7 +8,7 @@ from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
 from api.filters import IngredientNameFilter, RecipesFilter
-from api.permissions import (GuestIsReadOnlyAdminOrOwnerFullAccess)
+from api.permissions import GuestIsReadOnlyAdminOrOwnerFullAccess
 from grocery_assistant.models import (FavoriteRecipe, Follow, Ingredient,
                                       Recipe, ShopingList, Tag, User)
 from users.models import User
@@ -100,15 +100,10 @@ class CustomUserViewSet(UserViewSet):
                             status=status.HTTP_404_NOT_FOUND)
         elif request.method == 'DELETE':
             if Follow.objects.filter(author=author, user=user).exists():
-                val_count = Follow.objects.filter(author=author,
-                                                  user=user).count()
-                if val_count == 1:
-                    Follow.objects.get(author=author,
-                                       user=user).delete()
-                    return Response('Успешная отписка',
-                                    status=status.HTTP_204_NO_CONTENT)
-                return Response({'errors': 'Системная ошибка'},
-                                status=status.HTTP_404_NOT_FOUND)
+                Follow.objects.get(author=author,
+                                   user=user).delete()
+                return Response('Успешная отписка',
+                                status=status.HTTP_204_NO_CONTENT)
             return Response({'errors': 'Объект не найден'},
                             status=status.HTTP_404_NOT_FOUND)
 
@@ -139,7 +134,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """ Выбираем какой сериализатор использовать """
-        print(self.request.method)
         if self.request.method in SAFE_METHODS:
             return RecipesSerializerList  # Для отображения списка
         return RecipesSerializerAdd  # Для добавления и редакирования
@@ -156,18 +150,15 @@ class RecipesViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if request.method == 'POST':
             if FavoriteRecipe.objects.filter(user=user,
-                                               recipes=recipe).exists():
+                                             recipes=recipe).exists():
                 return Response({'errors': 'Рецепт уже в избранном!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             serializer = FavoriteRecipesSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user, recipes=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.is_valid(raise_exception=True)
+            serializer.save(user=user, recipes=recipe)
         if not FavoriteRecipe.objects.filter(user=user,
-                                               recipes=recipe).exists():
+                                             recipes=recipe).exists():
             return Response({'errors': 'Рецепт уже удален из избранного!'},
                             status=status.HTTP_404_NOT_FOUND)
         FavoriteRecipe.objects.get(recipes=recipe).delete()
@@ -183,7 +174,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if request.method == 'POST':
             if ShopingList.objects.filter(user=user,
-                                           recipes=recipe).exists():
+                                          recipes=recipe).exists():
                 return Response({'errors': 'Рецепт уже добавлен!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             serializer = ShopingListSerializer(data=request.data)
@@ -195,7 +186,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         if request.method == 'DELETE':
             if not ShopingList.objects.filter(user=user,
-                                               recipes=recipe).exists():
+                                              recipes=recipe).exists():
                 return Response({'errors': 'Объект не найден'},
                                 status=status.HTTP_404_NOT_FOUND)
             ShopingList.objects.get(recipes=recipe).delete()

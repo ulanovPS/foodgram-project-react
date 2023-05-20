@@ -204,7 +204,7 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
                 amount=ingredient['amount']
             )for ingredient in ingredients]
         )
-    
+
     def create(self, validated_data):
         """ Создание нового рецепта """
         tags = validated_data.pop('tags')

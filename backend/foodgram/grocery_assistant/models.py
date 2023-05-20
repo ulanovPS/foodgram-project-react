@@ -1,10 +1,9 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.core.exceptions import ValidationError
-import webcolors
-from .validators import HexColorValidator
 
 from users.models import User
+
+from .validators import HexColorValidator
 
 
 class Tag(models.Model):
@@ -26,7 +25,7 @@ class Tag(models.Model):
         unique=True,
         verbose_name='Slag тег',
     )
-                
+
     def __str__(self):
         return self.name
 
