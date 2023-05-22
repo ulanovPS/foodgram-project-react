@@ -21,8 +21,6 @@ class RecipesTagListFilter(admin.SimpleListFilter):
             for i in Tag.objects.all():
                 lst = lst + [((i.pk), _(i.name),)]
             return lst
-        else:
-            pass
 
     def queryset(self, request, queryset):
         tag_id = self.value()

@@ -97,7 +97,7 @@ class CustomUserViewSet(UserViewSet):
                                 status=status.HTTP_404_NOT_FOUND)
             return Response({'errors': 'Подписка уже создана'},
                             status=status.HTTP_404_NOT_FOUND)
-        elif request.method == 'DELETE':
+        else:
             if Follow.objects.filter(author=author, user=user).exists():
                 Follow.objects.get(author=author,
                                    user=user).delete()
@@ -182,7 +182,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                                 status=status.HTTP_201_CREATED)
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
-        if request.method == 'DELETE':
+        else:
             if not ShopingList.objects.filter(user=user,
                                               recipes=recipe).exists():
                 return Response({'errors': 'Объект не найден'},
