@@ -226,7 +226,6 @@ class RecipesSerializerAdd(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         """ Обрабатываем все записи и выводим """
-        recipe = super().to_representation(instance)
         return RecipesSerializerList(
             instance,
             context={'request': self.context.get('request')}

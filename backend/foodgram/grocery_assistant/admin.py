@@ -21,6 +21,7 @@ class RecipesTagListFilter(admin.SimpleListFilter):
             for i in Tag.objects.all():
                 lst = lst + [((i.pk), _(i.name),)]
             return lst
+        return '-'
 
     def queryset(self, request, queryset):
         tag_id = self.value()
@@ -64,14 +65,14 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_photo(self, object):
         if object.image:
             return mark_safe(f"<img src='{object.image.url}' width=50>")
+        return
     get_photo.short_description = "Миниатюра"
 
     def get_count_favorite(self, object):
         count = FavoriteRecipe.objects.filter(recipes=object).count()
         if count > 0:
             return f'{count} Пользователь'
-        else:
-            return '-'
+        return '-'
     get_count_favorite.short_description = 'Добавили в избранное'
 
 
