@@ -46,7 +46,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: krivse/foodgram-backend:v1.3
+          tags: psulanov/foodgram-backend:v1.3
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
