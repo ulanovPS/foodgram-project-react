@@ -19,3 +19,4 @@ djangorestframework_simplejwt
 social-auth-app-django
 django-extra-fields
 webcolors
+djoser
