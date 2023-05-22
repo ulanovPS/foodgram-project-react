@@ -44,9 +44,9 @@ jobs:
         # Пуш образа в Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: ./grocery_assistant
+          context: ./backend
           push: true
-          tags: psulanov/grocery_assistant:latest
+          tags: krivse/foodgram-backend:v1.3
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
