@@ -16,6 +16,7 @@ sqlparse==0.3.1
 Pillow
 django-cors-headers
 djangorestframework_simplejwt
-social-auth-app-django-5.2.0
+social-auth-app-django
 django-extra-fields
 webcolors
+debug_toolbar
