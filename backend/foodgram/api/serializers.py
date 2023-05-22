@@ -2,11 +2,10 @@ from django.core import exceptions
 from django.core.validators import MinValueValidator
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import serializers
-
 from grocery_assistant.models import (FavoriteRecipe, Follow, Ingredient,
                                       IngredientRecipe, Recipe, ShopingList,
                                       Tag)
+from rest_framework import serializers
 from users.models import User
 
 
