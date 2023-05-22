@@ -65,7 +65,7 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_photo(self, object):
         if object.image:
             return mark_safe(f"<img src='{object.image.url}' width=50>")
-        return
+        return '-'
     get_photo.short_description = "Миниатюра"
 
     def get_count_favorite(self, object):
