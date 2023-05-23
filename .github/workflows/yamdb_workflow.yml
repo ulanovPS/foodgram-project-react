@@ -43,7 +43,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: psulanov/foodgram-backend:v1.3
+          tags: psulanov/foodgram-backend:latest
 
   build_and_push_frontend_to_docker_hub:
     name: Pushing frontend image to Docker Hub
@@ -65,7 +65,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: psulanov/foodgram-frontend:v1.1
+          tags: psulanov/foodgram-frontend:latest
 
   deploy:
     runs-on: ubuntu-latest
