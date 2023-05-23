@@ -8,4 +8,4 @@ RUN python -m pip install --upgrade pip && pip3 install -r ./requirements.txt --
 
 COPY ./ ./
 
-CMD ["gunicorn", "grocery_assistant.wsgi:application", "--bind", "0:8888" ]
+CMD ["gunicorn", "grocery_assistant.wsgi:application", "--bind", "0:8000" ]
