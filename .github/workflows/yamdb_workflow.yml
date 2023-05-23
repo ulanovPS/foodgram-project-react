@@ -71,8 +71,7 @@ jobs:
           docker-compose rm frontend
           docker-compose pull web
           docker-compose pull frontend
-          docker compose up -dsudo docker-compose stop
-          docker-compose rm web
+          docker compose up -d
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
