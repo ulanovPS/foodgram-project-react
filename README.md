@@ -105,8 +105,13 @@ sudo docker compose stop         - без удаления
 
 IP - 158.160.21.241
 
-username=p.s.ulanov
+superuser
+username=pavel
 email=p.s.ulanov@gmail.com
+pas=pavel
+
+username=p.s.ulanov
+email=ulanov@nobadayrussia.com
 pas=pavel
 
 user_name=vlasova_zin
@@ -115,4 +120,4 @@ pas=pavel
 
 ### Автор
 
-Уланов Павел
+Уланов Павел Сегеевич
