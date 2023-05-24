@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load secret varible from .env
 dotenv_path = os.path.join(BASE_DIR.parent.parent, 'infra\\.env')
+load_dotenv(dotenv_path)
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
@@ -84,9 +85,9 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', default='grocery_assistant'),
-        'USER': os.getenv('POSTGRES_USER', default='ga_user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='pavel'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
         'HOST': os.getenv('DB_HOST', default='127.0.0.1'),
         'PORT': os.getenv('DB_PORT', default='5432')
     }
