@@ -101,6 +101,18 @@ sudo docker compose stop         - без удаления
 3. Разворачивание проекта на удаленном сервере
 4. Отправка сообщения в Telegram в случае успеха
 
+### IP адрес проекта и пользователи
+
+IP - 158.160.21.241
+
+username=p.s.ulanov
+email=p.s.ulanov@gmail.com
+pas=pavel
+
+user_name=vlasova_zin
+email=vlasova_zin@bk.ru
+pas=pavel
+
 ### Автор
 
-Уланов Павел *
+Уланов Павел
