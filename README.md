@@ -1,3 +1,6 @@
+![status workflow](https://github.com/ulanovPS/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+
+`Python` `Django` `Django Rest Framework` `Docker` `Gunicorn` `NGINX` `PostgreSQL` `Yandex Cloud` `Continuous Integration` `Continuous Deployment`
 # **_Grocery_Assistant_**
 
 Дипломный проект — сайт Foodgram, «Продуктовый помощник», онлайн-сервис и API.
