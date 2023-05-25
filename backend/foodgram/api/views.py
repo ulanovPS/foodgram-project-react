@@ -155,6 +155,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
             serializer = FavoriteRecipesSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save(user=user, recipes=recipe)
+            return Response('Рецепт успешно добавлен в избранное',
+                        status=status.HTTP_201_CREATED)
         if not FavoriteRecipe.objects.filter(user=user,
                                              recipes=recipe).exists():
             return Response({'errors': 'Рецепт уже удален из избранного!'},
