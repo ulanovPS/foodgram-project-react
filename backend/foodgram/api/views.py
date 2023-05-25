@@ -91,7 +91,7 @@ class CustomUserViewSet(UserViewSet):
                     serializer.save(author=author, user=user)
                     return Response(
                         {'Подписка успешно создана': serializer.data},
-                        status=status.HTTP_201_CREATED
+                         status=status.HTTP_201_CREATED
                     )
                 return Response({'errors': 'Объект не найден'},
                                 status=status.HTTP_404_NOT_FOUND)
